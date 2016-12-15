@@ -1,0 +1,9 @@
+median -i ../../images/dragons.pgm.binary -m 0 
+median -i ../../images/dragons.pgm.binary -m 1 
+median -i ../../images/dragons.pgm.binary -m 2 
+median -i ../../images/dragons.pgm.binary -m 3 
+median -i ../../images/dragons.pgm.binary -m 4 
+median -i ../../images/dragons.pgm.binary -m 5 
+median -i ../../images/dragons.pgm.binary -m 6 
+median -i ../../images/dragons.pgm.binary -m 7 
+

@@ -1,0 +1,129 @@
+#	$Header: /usr/people/sam/tiff/tools/RCS/Makefile.next,v 1.20 92/10/21 16:30:27 sam Exp $
+#
+# TIFF Library Tools
+#
+# Copyright (c) 1988, 1989, 1990, 1991, 1992 Sam Leffler
+# Copyright (c) 1991, 1992 Silicon Graphics, Inc.
+# 
+# Permission to use, copy, modify, distribute, and sell this software and 
+# its documentation for any purpose is hereby granted without fee, provided
+# that (i) the above copyright notices and this permission notice appear in
+# all copies of the software and related documentation, and (ii) the names of
+# Sam Leffler and Silicon Graphics may not be used in any advertising or
+# publicity relating to the software without the specific, prior written
+# permission of Stanford and Silicon Graphics.
+# 
+# THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
+# EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
+# WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
+# 
+# IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
+# ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
+# OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+# WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
+# LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
+# OF THIS SOFTWARE.
+#
+NULL=
+IPATH=	-I../libtiff
+#
+# If you don't want the public domain getopt code, then
+# simply null this out and you'll get whatever is in your
+# libc (or similar).
+#
+GETOPT=	getopt.o
+#
+# Library-wide configuration defines:
+# Note that if you change the library-wide configuration, you'll
+# need to manual force a full rebuild. 
+#
+CONF_LIBRARY=\
+	${NULL}
+COPTS=	
+CFLAGS=	-g ${COPTS} ${IPATH}
+#
+LIBTIFF=../libtiff/libtiff.a
+LIBS=	${LIBTIFF}
+MACHALL=ras2tiff
+OBJS=	\
+	fax2tiff.o \
+	gif2tiff.o \
+	pal2rgb.o \
+	ppm2tiff.o \
+	rgb2ycbcr.o \
+	tiff2bw.o \
+	tiff2ps.o \
+	tiffcmp.o \
+	tiffcp.o \
+	tiffdither.o \
+	tiffdump.o \
+	tiffinfo.o \
+	tiffmedian.o \
+	tiffsplit.o \
+	ras2tiff.o \
+	${GETOPT} \
+	${NULL}
+ALL=\
+	fax2tiff \
+	gif2tiff \
+	pal2rgb \
+	ppm2tiff \
+	rgb2ycbcr \
+	tiff2bw \
+	tiff2ps \
+	tiffcmp \
+	tiffcp \
+	tiffdither \
+	tiffdump \
+	tiffinfo \
+	tiffmedian \
+	tiffsplit \
+	${MACHALL} \
+	${NULL}
+
+all:	 ${ALL}
+
+tiffinfo: tiffinfo.c ${GETOPT} ${LIBTIFF}
+	${CC} -o tiffinfo ${CFLAGS} tiffinfo.c ${GETOPT} ${LIBS}
+tiffcmp:tiffcmp.c ${GETOPT} ${LIBTIFF}
+	${CC} -o tiffcmp ${CFLAGS} tiffcmp.c ${GETOPT} ${LIBS}
+tiffcp:	tiffcp.c ${LIBTIFF}
+	${CC} -o tiffcp ${CFLAGS} tiffcp.c ${LIBS}
+tiffdump: tiffdump.c
+	${CC} -o tiffdump ${CFLAGS} tiffdump.c
+tiffmedian: tiffmedian.c ${LIBTIFF}
+	${CC} -o tiffmedian ${CFLAGS} tiffmedian.c ${LIBS}
+tiffsplit: tiffsplit.c ${LIBTIFF}
+	${CC} -o tiffsplit ${CFLAGS} tiffsplit.c ${LIBS}
+tiff2ps: tiff2ps.c ${LIBTIFF}
+	${CC} -o tiff2ps ${CFLAGS} tiff2ps.c ${LIBS} -lm
+# junky stuff...
+# convert RGB image to B&W
+tiff2bw: tiff2bw.c ${GETOPT} ${LIBTIFF}
+	${CC} -o tiff2bw ${CFLAGS} tiff2bw.c ${GETOPT} ${LIBS}
+# convert B&W image to bilevel w/ FS dithering
+tiffdither: tiffdither.c ${LIBTIFF}
+	${CC} -o tiffdither ${CFLAGS} tiffdither.c ${LIBS}
+# Group 3 FAX file converter
+fax2tiff: fax2tiff.c ${GETOPT} ${LIBTIFF}
+	${CC} -o fax2tiff ${CFLAGS} ${CONF_LIBRARY} fax2tiff.c ${GETOPT} ${LIBS}
+# convert Palette image to RGB
+pal2rgb: pal2rgb.c ${LIBTIFF}
+	${CC} -o pal2rgb ${CFLAGS} pal2rgb.c ${LIBS}
+# convert RGB image to YCbCr
+rgb2ycbcr: rgb2ycbcr.c ${GETOPT} ${LIBTIFF}
+	${CC} -o rgb2ycbcr ${CFLAGS} rgb2ycbcr.c ${GETOPT} ${LIBS} -lm
+# GIF converter
+gif2tiff: gif2tiff.c ${LIBTIFF}
+	${CC} -o gif2tiff ${CFLAGS} gif2tiff.c ${LIBS} -lm
+# PBM converter
+ppm2tiff: ppm2tiff.c ${LIBTIFF}
+	${CC} -o ppm2tiff ${CFLAGS} ppm2tiff.c ${LIBS}
+# Sun rasterfile converter
+ras2tiff: ras2tiff.c ${LIBTIFF}
+	${CC} -o ras2tiff ${CFLAGS} ras2tiff.c ${LIBS}
+
+install: all
+
+clean:
+	rm -f ${ALL} ${OBJS} core a.out ycbcr

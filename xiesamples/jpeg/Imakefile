@@ -1,0 +1,9 @@
+SYS_LIBRARIES = ../lib/libSamp.a -lXmu -lXt -lXext -lICE -lSM -lXIE -lX11 ../../jpeg/libjpeg.a -lm 
+
+DEFINES = -I../lib -I/usr/X11R6/include -I/usr/X11R6/include/X11 \
+	-I/usr/X11R6/include/X11/extensions -I../../jpeg
+
+AllTarget(qtables)
+
+NormalProgramTarget(qtables,qtables.o,,,)
+

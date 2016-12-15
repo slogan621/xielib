@@ -1,0 +1,32 @@
+
+#define DoNormalLib YES 
+#define DoSharedLib NO
+#define DoDebugLib NO
+#define DoProfileLib NO
+#define LibName Samp
+#define IncSubdir extensions
+
+DEFINES = -I/usr/X11R6/include -I/usr/X11R6/include/X11 \
+	-I/usr/X11R6/include/X11/extensions
+
+#if Malloc0ReturnsNull
+ALLOC_DEFINES = -DMALLOC_0_RETURNS_NULL
+#endif
+
+SRCS = Xcms.c       errors.c     kernel.c     querytech.c  remap.c \
+backend.c    events.c     misc.c       readPGM.c    transform.c \
+clientio.c   histos.c     noise.c      readjif.c
+
+OBJS = Xcms.o       errors.o     kernel.o     querytech.o  remap.o \
+backend.o    events.o     misc.o       readPGM.o    transform.o \
+clientio.o   histos.o     noise.o      readjif.o
+
+#include <Library.tmpl>
+
+#ifdef NativeFPFormat
+NATIVE_FP_FORMAT = NativeFPFormat
+FP_DEFINES = -DNATIVE_FP_FORMAT=$(NATIVE_FP_FORMAT)
+SpecialCLibObjectRule(ieee,$(ICONFIGFILES),$(FP_DEFINES))
+#endif
+
+NormalLibraryTarget(Samp,$(OBJS))

@@ -1,0 +1,16 @@
+! VMS linker options file for linking the TIFF library into a shareable image
+!
+! Please update the minor version number below, when adding new routines
+GSMATCH=LEQUAL,1,4
+!
+! Place the transfer vector at the beginning of the image
+!
+CLUSTER=TIFFVEC,,,TIFFVEC
+!
+! Then take the object library
+!
+TIFF/LIBRARY
+!
+! The C RTL shareable image
+!
+SYS$SHARE:VAXCRTL/SHARE

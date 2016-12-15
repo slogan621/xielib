@@ -1,0 +1,7 @@
+#!/bin/sh
+src=$1
+for file in kernels/Prewitt/*
+do
+	echo $file
+	convolve -i $src -k $file
+done

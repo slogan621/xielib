@@ -1,0 +1,175 @@
+.\"	$Header: /usr/people/sam/tiff/man/man1/RCS/tiffcp.1,v 1.17 93/08/09 17:39:22 sam Exp $
+.\"
+.\" Copyright (c) 1988, 1989, 1990, 1991, 1992 Sam Leffler
+.\" Copyright (c) 1991, 1992 Silicon Graphics, Inc.
+.\"
+.\" Permission to use, copy, modify, distribute, and sell this software and 
+.\" its documentation for any purpose is hereby granted without fee, provided
+.\" that (i) the above copyright notices and this permission notice appear in
+.\" all copies of the software and related documentation, and (ii) the names of
+.\" Sam Leffler and Silicon Graphics may not be used in any advertising or
+.\" publicity relating to the software without the specific, prior written
+.\" permission of Sam Leffler and Silicon Graphics.
+.\" 
+.\" THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
+.\" EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
+.\" WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
+.\" 
+.\" IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
+.\" ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
+.\" OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+.\" WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
+.\" LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
+.\" OF THIS SOFTWARE.
+.\"
+.TH TIFFCP 1 "August 9, 1993"
+.SH NAME
+tiffcp \- copy (and possibly convert) a
+.SM TIFF
+file
+.SH SYNOPSIS
+.B tiffcp
+[
+.B \-strips
+] [
+.B \-rowsperstrip
+.I n
+] [
+.B \-tiles
+] [
+.B \-tilewidth
+.I n
+] [
+.B \-tilelength
+.I n
+] [
+.B \-contig
+] [
+.B \-separate
+] [
+.B \-lsb2msb
+] [
+.B \-msb2lsb
+] [
+.B \-none
+] [
+.B \-packbits
+] [
+.B \-lzw
+] [
+.B \-g3
+] [
+.B \-g4
+] [
+.B \-1d
+] [
+.B \-2d
+] [
+.B \-fill
+] [
+.B \-predictor
+.I n
+]
+.I "src1 ... srcN dst"
+.SH DESCRIPTION
+.I tiffcp
+combines one or more files created according
+to the Tag Image File Format, Revision 6.0
+into a single
+.SM TIFF
+file.
+Because the output file may be compressed using a different
+algorithm than the input files,
+.I tiffcp
+is most often used to convert between different compression
+schemes.
+.PP
+By default, 
+.I tiffcp
+will copy all the understood tags in a
+.SM TIFF
+directory of an input
+file to the associated directory in the output file.
+The
+.BR \-none ,
+.BR \-packbits ,
+.BR \-lzw ,
+.BR \-g3 ,
+and
+.BR \-g4 ,
+options are used to override the value of the
+.I Compression
+tag and thereby redefine
+the compression scheme to use in creating the output file.
+The
+.SM CCITT
+Group 3 and Group 4 compression algorithms can only
+be used with bilevel data.
+The
+.BR \-1d ,
+.BR \-2d ,
+and
+.B \-fill
+options are meaningful only with Group 3 compression:
+.B \-1d
+requests 1-dimensional encoding,
+.B \-2d
+requests 2-dimensional encoding, and
+.B \-fill
+requests that each encoded scanline be
+zero-filled to a byte boundary.
+The
+.B \-predictor
+option is only meaninful with 
+.SM LZW
+compression: a predictor value of 2 causes
+each scanline of the output image to undergo horizontal
+differencing before it is encoded; a value
+of 1 forces each scanline to be encoded without differencing.
+.PP
+By default,
+.I tiffcp
+will create a new file with the same data organization as
+the original.
+The
+.B \-strips
+and
+.B \-tiles
+options can be used to force the resultant image to be written
+as strips or tiles of data, respectively.
+The
+.B \-rowsperstrip
+option can be used to set the number of rows (scanlines)
+in each strip of data, while the
+.B \-tilewidth
+and
+.B \-tilelength
+options can be used to specify the dimensions of tiles.
+By default, the output file attempts to setup strip and tile
+dimensions so that no more than 8 kilobytes of data appear in
+a strip or tile.
+.PP
+The
+.B \-contig
+and
+.B \-separate
+options can be used to convert between different planar
+configurations if the original files have one 8-bit
+sample per pixel.
+.PP
+By default,
+.I tiffcp
+will create a new file with the same fill order as the original.
+The
+.B \-lsb2msb
+and
+.B \-msb2lsb
+options can be used to specify the fill order of data
+in the output file.
+.SH "SEE ALSO"
+.IR pal2rgb (1),
+.IR tiffinfo (1),
+.IR tiffcmp (1),
+.IR tiffmedian (1),
+.IR tiffsplit (1),
+.IR libtiff (3)

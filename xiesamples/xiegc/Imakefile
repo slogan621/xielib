@@ -1,0 +1,24 @@
+           DEFINES = -I../lib -I/usr/X11R6/include -I/usr/X11R6/include/X11 \
+        -I/usr/X11R6/include/X11/extensions
+ 
+	   SRCS = dashlist.c planemas.c getfile.c tests.c text.c \
+                  choice.c main.c interpre.c testfrac.c \
+		  xiestuff.c
+           OBJS = dashlist.o planemas.o getfile.o tests.o text.o \
+                  choice.o main.o interpre.o testfrac.o \
+                  xiestuff.o
+LOCAL_LIBRARIES = ../lib/libSamp.a $(XAWLIB) $(XMULIB) $(XTOOLLIB) \
+		  -lXIE -lXext -lSM -lICE  $(XLIB)
+        DEPLIBS = $(DEPXAWLIB) $(DEPXMULIB) $(DEPXTOOLLIB) $(DEPXLIB)
+  SYS_LIBRARIES = -lm
+         YFLAGS = -d
+
+all::
+
+XCOMM LexFile(lex)
+
+XCOMM YaccFile(gram,$(YFLAGS))
+
+ComplexProgramTarget(xiegc)
+
+InstallAppDefaults(Xgc)

@@ -1,0 +1,9 @@
+#for i in 128 64 32 16 8 4 2
+for i in 2 4
+do
+echo levels $i
+echo error diffusion
+dither -i ../../images/jpeg/gray/lekygray.jpg -l $i
+echo ordered threshold 8
+dither -i ../../images/jpeg/gray/lekygray.jpg -l $i -o 8
+done 

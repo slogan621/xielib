@@ -1,0 +1,127 @@
+#	$Header: /usr/people/sam/tiff/tools/RCS/Makefile.mpw,v 1.2 93/08/26 15:00:51 sam Exp $
+#
+# Tag Image File Format Library
+#
+# Copyright (c) 1988, 1989, 1990, 1991, 1992 Sam Leffler
+# Copyright (c) 1991, 1992 Silicon Graphics, Inc.
+# 
+# Permission to use, copy, modify, distribute, and sell this software and 
+# its documentation for any purpose is hereby granted without fee, provided
+# that (i) the above copyright notices and this permission notice appear in
+# all copies of the software and related documentation, and (ii) the names of
+# Sam Leffler and Silicon Graphics may not be used in any advertising or
+# publicity relating to the software without the specific, prior written
+# permission of Stanford and Silicon Graphics.
+# 
+# THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
+# EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
+# WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
+# 
+# IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
+# ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
+# OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+# WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
+# LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
+# OF THIS SOFTWARE.
+#
+
+#
+# Makefile for Mac using MPW 3.2.3 and MPW C 3.2.4
+#
+.c.o  .c
+	{C} {COptions} {CFLAGS} -s {Default} {DepDir}{Default}.c -o {TargDir}{Default}.c.o
+
+CONF_LIBRARY=
+	-d USE_CONST=0
+	-d BSDTYPES
+
+IPATH= -i ::libtiff
+
+CFLAGS=	-w -m {IPATH} {CONF_LIBRARY}
+
+GETOPT=	getopt.c.o
+
+LOptions= -w -srt -d -c 'MPS ' -t MPST
+
+LIBTIFF= ::libtiff:libtiff.o {GETOPT}
+
+LIBS=	{LIBTIFF} 
+		"{CLibraries}"CSANELib.o 
+		"{CLibraries}"Math.o 
+		#"{CLibraries}"Complex.o 
+		"{CLibraries}"StdClib.o 
+		"{Libraries}"Stubs.o 
+		"{Libraries}"Runtime.o 
+		"{Libraries}"Interface.o 
+		"{Libraries}"ToolLibs.o 
+
+SRCS=
+	pal2rgb.c 
+	ras2tiff.c 
+	tiff2bw.c 
+	tiff2ps.c 
+	tiffcmp.c 
+	tiffcp.c 
+	tiffdither.c 
+	tiffdump.c 
+	tiffinfo.c 
+	tiffmedian.c 
+	
+MACHALL=ras2tiff
+
+ALL=
+	tiffinfo 
+	tiffcmp 
+	tiffcp 
+	tiffdump 
+	tiffmedian 
+	tiff2bw 
+	tiffdither 
+	tiff2ps 
+	pal2rgb 
+	gif2tiff 
+	{MACHALL}
+
+all 	 {ALL}
+
+tiffinfo  tiffinfo.c.o {LIBTIFF} 
+	Link {LOptions} tiffinfo.c.o {LIBS} -o tiffinfo
+	
+tiffcmp  tiffcmp.c.o {LIBTIFF}
+	Link {LOptions} tiffcmp.c.o {LIBS} -o tiffcmp
+	
+tiffcp  tiffcp.c.o {LIBTIFF}
+	Link {LOptions} tiffcp.c.o {LIBS} -o tiffcp
+	
+tiffdump  tiffdump.c.o {LIBTIFF}
+	Link {LOptions} tiffdump.c.o {LIBS} -o tiffdump
+	
+tiffmedian  tiffmedian.c.o {LIBTIFF}
+	Link {LOptions} tiffmedian.c.o {LIBS} -o tiffmedian
+	
+tiff2ps  tiff2ps.c.o {LIBTIFF}
+	Link {LOptions} tiff2ps.c.o {LIBS} -o tiff2ps
+	
+# junky stuff...
+# convert RGB image to B&W
+tiff2bw  tiff2bw.c.o {LIBTIFF}
+	Link {LOptions} tiff2bw.c.o {LIBS} -o tiff2bw
+	
+# convert B&W image to bilevel w/ FS dithering
+tiffdither  tiffdither.c.o {LIBTIFF}
+	Link {LOptions} tiffdither.c.o {LIBS} -o tiffdither
+	
+# GIF converter
+gif2tiff  gif2tiff.c.o {LIBTIFF}
+	Link {LOptions} gif2tiff.c.o {LIBS} -o gif2tiff
+	
+# convert Palette image to RGB
+pal2rgb  pal2rgb.c.o {LIBTIFF}
+	Link {LOptions} pal2rgb.c.o {LIBS} -o pal2rgb
+	
+# Sun rasterfile converter
+ras2tiff  ras2tiff.c.o {LIBTIFF}
+	Link {LOptions} ras2tiff.c.o {LIBS} -o ras2tiff
+	
+clean 
+	delete -i {ALL} .c.o ycbcr

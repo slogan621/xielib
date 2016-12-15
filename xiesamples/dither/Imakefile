@@ -1,0 +1,9 @@
+SYS_LIBRARIES = ../lib/libSamp.a -lXIE -lXmu -lXt -lX11 -lm -lXext -lICE -lSM
+
+DEFINES = -I../lib -I/usr/X11R6/include -I/usr/X11R6/include/X11 \
+	-I/usr/X11R6/include/X11/extensions
+
+AllTarget(dither)
+
+NormalProgramTarget(dither,dither.o,,,)
+

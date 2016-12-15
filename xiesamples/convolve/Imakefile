@@ -1,0 +1,9 @@
+SYS_LIBRARIES = ../lib/libSamp.a -lXmu -lXt -lICE -lXext -lSM -lXIE -lX11 -lm 
+
+DEFINES = -I../lib -I/usr/X11R6/include -I/usr/X11R6/include/X11 \
+	-I/usr/X11R6/include/X11/extensions
+
+AllTarget(convolve)
+
+NormalProgramTarget(convolve,convolve.o,,,)
+

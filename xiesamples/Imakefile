@@ -1,0 +1,14 @@
+#ifdef BandAidCompiler
+#include BandAidCompiler
+#endif
+
+#define IHaveSubdirs
+#define PassCDebugFlags 'CDEBUGFLAGS=$(CDEBUGFLAGS)'
+
+SUBDIRS = lib constrain errors sobel convolve geometry modify threshold \
+arith hist_slide tiff average icr pasteup backend idraw point dither \
+balance dumptech idrawp redefine unsharp_mask bands edraw jpeg rgb xiegc \
+edrawp showdiff xlib clientio jpegtoraw match_hist simple faxview \
+scale_to_gray hasxie blend expose emp
+
+MakeSubdirs( $(SUBDIRS) )

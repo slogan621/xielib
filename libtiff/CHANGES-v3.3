@@ -1,0 +1,65 @@
+$Header: /usr/people/sam/tiff/RCS/CHANGES-v3.3,v 1.3 93/08/26 15:20:39 sam Exp $
+
+TIFF Software "Release" 3.30 (changes since 3.2beta)
+----------------------------------------------------
+General changes:
+    o the application interfaces have been overhauled to promote portability;
+      a new set of typedefs are defined in tiff.h and tiffio.h and used in
+      the library interfaces; see intro(3T) and libtiff/README for detailed
+      information
+
+Changes in libtiff:
+    o the internal types used by the library have been reworked for portability
+      to 64-bit architectures (as well as 16-bit machines)
+    o the library no longer restricts the number of samples/pixel to <= 4
+    o the ExtraSamples tag is now fully supported; uses of the old Matteing tag
+      should eliminated
+    o TIFFGetFieldDefaulted now correctly handles the TransferFunction,
+      ReferenceBlackWhite, and ExtraSamples, tags 
+    o ExtraSamples tags incorrectly written with a BYTE type are now accepted
+      for compatiblity with Adobe Photoshop v2.5 (the 6.0 spec requires SHORTs)
+    o strip chopping is now done for appropriately structured tiled images
+    o a minor memory leak in the directory writing logic was plugged
+    o RATIONAL and SRATIONAL values are written with more care to avoid loss of
+      precision
+    o strip sizes and numbers are now long rather than int
+    o strip decoding routines now increment the row number as they go so that
+      diagnostic messages are more meaningful
+    o the YCbCR to RGB conversion algorithms have been improved
+    o a bug was fixed in the YCbCr to RGB conversion algorithm
+    o TIFFPrintDirectory no longer displays the Matteing; instead showing the
+      ExtraSamples information
+    o TIFFSetWriteOffset is a new function that is useful for overwriting image
+      data (added for overwriting retransmitted facsimile pages)
+    o TIFFIsByteSwapped is a new function that can be used to decide whether or
+      not to byteswap >8-bit data
+    o Island Graphics-specific tags are defined in tiff.h (but no support is
+      otherwise included)
+    o the VMS support code handles bogus files written with fixed records
+    o the Macintosh support code no longer tries to seek off the end of a file
+    o the unused file machdep.h was removed
+
+Changes in the tools:
+    o all uses of bzero and bcmp have been replaced by the more common mem*
+      requivalent functions
+    o ppm2tiff.c has a new -resolution option to specify the image resolution
+      in dot/inch
+    o sgigt.c has an improved YCbCr to RGB conversion algorithm; it also does
+      a better job of recognizing images that it cannot handle
+    o sgisv.c now saves separated data correctly
+    o tiff2ps.c has many changes: the -a option forces all images in a TIFF
+      to be converted as PostScript (not EPS), the -h and -w options are now
+      interpreted as the width and height to use for the printed area, a new
+      -2 option causes PostScript Level II to be generated
+    o tiffcmp.c has been updated to handle ExtraSamples tags
+    o tiffcp.c now handles tiled images (thanks to JT Conklin); new -tiledepth
+      and -tilewidth options can be used to specify the dimensions of tiles in
+      output image; -strips and -tiles options can be used to select a specific
+      data organization for the resultant image; a new -1d option forces 1D
+      encoding of the output image when using CCITT Group 3 encoding
+    o a bug in the handling of packed SHORT and BYTE tag values was fixed
+      (again) in tiffdump.c
+
+Changes in the contrib software:
+    o the fax2ps program is now more robust in decoding images with
+      errors in the encoded data

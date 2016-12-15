@@ -1,0 +1,10 @@
+#!/bin/sh
+mask=$1
+for src in $mask 
+do
+	for file in kernels/* 
+	do
+		echo $file
+		convolve -i $src -k $file
+	done	
+done

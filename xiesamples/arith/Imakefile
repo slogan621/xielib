@@ -1,0 +1,9 @@
+SYS_LIBRARIES = ../lib/libSamp.a -lXmu -lXt -lXIE -lX11 -lXext -lICE -lSM -lm 
+
+DEFINES = -I../lib -I/usr/X11R6/include -I/usr/X11R6/include/X11 \
+	-I/usr/X11R6/include/X11/extensions
+
+AllTarget(arith)
+
+NormalProgramTarget(arith,arith.o,,,)
+

@@ -1,0 +1,9 @@
+SYS_LIBRARIES = ../lib/libSamp.a -lXmu -lXt -lSM -lXext -lICE -lXIE -lX11 -lm 
+
+DEFINES = -I../lib -I/usr/X11R6/include -I/usr/X11R6/include/X11 \
+	-I/usr/X11R6/include/X11/extensions
+
+AllTarget(hist_slide)
+
+NormalProgramTarget(hist_slide,hist_slide.o,,,)
+

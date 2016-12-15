@@ -1,0 +1,1209 @@
+XIElib Sample Client Release Notes
+----------------------------------
+
+Bug reports
+-----------
+
+This software was developed on Linux 1.0.9 and Linux 1.2.13 with the July 
+1994 X11R6 release, as well as the more recent X11R6.1 and X11R6.3 releases. 
+The compiler used for this build was gcc version 2.7.0. The Imakefiles have
+been made to work with R6.3 but should be fine for whatever version of R6 
+you have installed on your host. 
+
+This release was built and lightly tested on a 16bpp TrueColor RedHat Linux
+system. A few problems with 16bpp support in the backend code (lib/backend.c)
+for TrueColor and StaticColor visuals were detected and patches have been
+applied. The backend code now, for all visuals with a bpp greater than 8, 
+will automatically make use of a StandardColormap. RGB_BEST_MAP is used if
+the image is color, and RGB_GRAY_MAP is used if the image is grayscale (and 
+not bitonal). 
+
+Please report any and all problems, bugs, questions, etc. to me, Syd 
+Logan, at slogan@cts.com. I am particularly interested in hearing about 
+problems with imake files and compiler warning/ error messages that you 
+might encounter as the software is ported to various Unix platforms. If 
+the software happens to port happily to your system, I'd like to hear 
+about that too. Please include the output of:
+
+$ uname -a
+
+when reporting any successes (or failures for that matter) so I can keep 
+track of things accurately. 
+
+Currently, the samples are known to build on:
+
+- SunOS 5.3 (presumably other variants of Solaris as well)
+- OSF1V3
+
+as well as Linux, as described above.
+
+If you have any suggestions for samples, or need some help, don't hesitate
+to ask.
+ 
+A bug report form similar to that used by the X Consortium is provided as a 
+template for bug reports/suggestions. It is located in the file bugs.template. 
+If you want to supply any fixes or changes, please provide context diffs so 
+that it is easier for identify and integrate the changes:
+
+$ diff -c old_version.c your_version.c > paste_this_into_report
+
+Most clients now use the backend code which is provided in lib/backend.c to
+prepare image pixels for display. See backend/backendtext.c for the most
+comprehensive example of this technique. Clients which don't make use of the
+backend code as of this release include average, balance, modify, redefine, 
+and the clients found in the xlib directory. An effort is being made to modify 
+these clients, and a release is forthcoming. You may experience problems with 
+these clients unless you are running on an 8-bit PseudoColor display.
+
+Release Contents
+----------------
+
+The release itself consists of 3 logical components, stored as 3 separate
+subdirectories in the distribution:
+
+libtiff - this contains the Sam Leffler/SGI 3.30beta version of libtiff. 
+Several of the sample clients require a libtiff.a to link properly. While 
+they have only been tested with this version of libtiff, later (and possibly 
+earlier) versions of the library will probably work as well. Consult the 
+readme files provided for information on obtaining the latest version of 
+libtiff. I will probably upgrade in the next release of this software.
+
+Follow the instructions provided with the libtiff release to build libtiff.a 
+library. This should be done before you attempt to compile the sample code 
+which is located in the "samples" directory (as described below).
+
+jpeg - this is release 4A of the Independent JPEG Group's JPEG software. A
+few clients refer to headers located in this directory, and link to libjpeg.a
+which can be built from the sources found here. 
+
+samples - this directory contains all of the sample XIElib code developed for 
+this release. To build these clients, you will need to first compile libtiff.a 
+as described above. For this release, you also must have an X11R6 release 
+installed on your host so that you can generate makefiles from the provided 
+imake files. X11R6 libXIE.a and libX11.a plus the appropriate header files 
+must also be present to build the clients. 
+
+A fourth directory, images, may be provided if this distribution media can 
+support its large size. Most of the samples work with grayscale JPEGs, a few 
+work with CCITT images stored in TIFF files, PGM, PPM, color JPEGs, or raw 
+SingleBand (grayscale) images. With the only exception of raw SingleBand 
+images, which need to be of a specific size, you should be able to provide 
+your own image data (xv can be used to generate any of the above types - to 
+date I have not had a problem reading xv-generated image files). 
+
+Building the software
+---------------------
+
+First, you'll need to build libtiff and libjpeg. The instructions for 
+building libtiff are provided in release notes in the libtiff directory. 
+libtiff provides several makefiles which you can use, for my Linux system 
+which uses gcc, I simply cd to libtiff/libtiff, and type:
+
+$ make -f Makefile.gcc
+
+Libjpeg is a little more difficult. The file SETUP contains instructions. On
+my Linux system, I make the following symlink: 
+
+$ ln -s jmemansi.c jmemsys.c
+
+and then type: 
+
+$ make -f makefile.ansi libjpeg.a
+
+Once libtiff and libjpeg are built, cd into xiesamples and type the following:
+
+$ /usr/X11R6/bin/xmkmf		-- your path may vary
+				  
+$ make Makefiles
+
+$ make
+
+That's it. 
+
+Running The Clients
+-----------------
+
+Instructions including usage are included below. Most clients can be exited 
+by clicking the mouse in the main window displayed by the client. Most clients 
+are designed to wait for their windows to be mapped before photoflo creation 
+and execution is performed. With a few exceptions (the nails and scale clients 
+for example) clients are not designed to redraw their contents should exposures
+occur on their contents. Setting the backing store to always on your server 
+when possible will compensate for this, but the better thing to do would be 
+to route the image data sent to ExportDrawable also to a photomap resource 
+and execute a simple photoflo consisting of ImportPhotomap -> ExportDrawable 
+if and when exposures occur. At some time I may make all examples do this 
+but for now I guess it is "left to the reader" as an exercise to do this.
+
+Similarly, some clients only are designed to work with 8-bit PseudoColor 
+visual classes. You are encouraged as X client developers to develop 
+photoflos which work on *any* X terminal or server, be it 1-bit "monochrome", 
+8-bit PseudoColor, or 24-bit TrueColor. The client backend_test in backend.c 
+provides an example of how one might attack the problem of developing a 
+visual class-neutral XIElib client; most other clients also make use of the
+backend code which is supplied and can be used as examples.
+
+Chapter 19 in the book is devoted to the issues addressed by the client 
+backend_test, and the code provided in lib/backend.c which was used to 
+implement it. 
+
+Sample descriptions
+-------------------
+
+As of yet, I don't have README files for the individual samples. Probably I 
+will do something in man page format when I get the time. For now, you can 
+type:
+
+$ foo -?
+
+(foo represents the name of a binary)
+
+to get a usage statement if you need to know the arguments. Almost all of the 
+clients will accept a '-i' argument to specify the name of the image file to 
+be processed/displayed:
+
+$ histo -i ../../images/jpeg/gray/dadgray.jpg
+
+for example. 
+
+Here are the contents of the samples directory as of this release and brief 
+descriptions of each client and the arguments that they accept:
+
+arith/
+
+	arith [-c constant] [-d display] -i image -o operator
+
+Operator can be one of the following strings (the corresponding Arithmetic
+element operator is listed to the right of the argument):
+
+Argument	Arithmetic Operator
+---------	------------------
+
+"ADD"		xieValAdd
+"SUB"		xieValSub
+"SUBREV"	xieValSubRev
+"MUL"		xieValMul
+"DIV"		xieValDiv
+"DIVREV"	xieValDivRev
+"MIN"		xieValMin
+"MAX"		xieValMax
+"GAMMA"		xieValGamma
+
+constant represents the second operand of the arithmetic operation performed,
+and should be a value in the range [0,255]. If constant is not specified, 
+then it defaults to 1.
+
+For each pixel Pi in the image, arith will perform the operation 
+
+Pi = Pi operator constant
+
+For example, if Pi is 128, operator is ADD, and constant is 12:
+
+Pi = 128 + 12 = 140
+
+The effect would be to increase the brightness of the image by a constant 
+factor of 12.
+
+average/
+
+	average [-d display] [-r reps] -i image
+
+Average takes an image, and creates and initializes two photomap resources, 
+one which contains the image after decode, the other which contains a version 
+of the image after a low-pass filter has been passed over the image using a 
+Convolve element. Once these two photomaps have been generated, the client 
+then loops reps times. In each loop, the client reads the photomaps, adds 
+them together with an Arithmetic element, divides the result by two using 
+another Arithmetic element, storing the result in one of the photomaps, and 
+displaying the result in a new X window. The image specified by the client
+must be JPEG, but can be SingleBand or TripleBand.
+
+	frame [-d display] [-r frames] [-r rate] -i image
+
+Frame is similar to average. Shot noise (random pixels set to white and 
+black) is added to a number of images (specified by -r or default 50).
+These images are added together and divided by the number of frames in 
+a somewhat successful attempt to rid the image of the shot noise. Frame
+accepts either a Portable Pixmap (PPM) TripleBand image or a Portable
+Graymap (PGM) SingleBand image, and illustrates the use of Uncompressed
+Single and UncompressedTriple decode techniques. 
+
+Both frame and average make use of Dither (only if the image is TripleBand), 
+ConvertToIndex, and ExportDrawable as backend elements, and assume an 8 bit
+-per-pixel display. This scheme is intended to work with X displays which 
+are PseudoColor and 8-bit deep. 
+
+backend/
+
+	backendtest [-d display] [-m StandardColormap ] [-c visual class] 
+		-i image
+
+This may be the most important client provided.
+
+This client illustrates the use of the photoflo backend code in lib/backend.c 
+designed to do the image class and levels attribute processing required to 
+display any given image (bitonal, color or grayscale of arbitrary depth) on 
+any given display (to a window belonging to an arbitrary visual class and 
+having an arbitrary depth).
+
+The client accepts TripleBand, SingleBand, and bitonal image data. TripleBand 
+and SingleBand image data must be supplied as JPEG (JFIF files); the bitonal 
+image data must be CCITT FAX (G32D, G32D, or G42D) which has been stored in a 
+TIFF file.
+
+To cause the client to use a StandardColormap, specify the standard colormap 
+atom as the -m argument, which can be one of:
+
+Argument	StandardColormap Atom
+---------	----------------------
+
+"BEST"		XA_RGB_BEST_MAP
+"DEFAULT"	XA_RGB_DEFAULT_MAP
+"GRAY"		XA_RGB_GRAY_MAP
+"RED"		XA_RGB_RED_MAP
+"GREEN"		XA_RGB_GREEN_MAP
+"BLUE"		XA_RGB_BLUE_MAP
+
+The user can also specify the use of one of the 6 visual classes defined by X, 
+if supported by the X server. The -c argument accepts the following:
+
+StaticGray
+GrayScale
+StaticColor
+PsuedoColor
+TrueColor
+DirectColor
+
+Some visual classes do not support certain standard colormaps. If the -m and 
+-c arguments conflict, a message stating this will be displayed by the client.
+
+balance/
+
+	balance [-d display] [-r red] [-g green] [-b blue] [-c cyan] 
+		[-m magenta] [-y yellow] -i image
+
+Balance accepts a TripleBand JPEG image, converts it from YCbCr to RGB. The
+RGB image is then passed through an Arithmetic element, which multiplies each
+pixel by coefficients which are designed to enhance the color associated with 
+the -r, -g, -b, -c, -m, -y arguments specified by the user. For example, the
+command line
+
+	balance -i foo.jpg -r 1
+
+causes the image to be multiplied by the coefficients 1.025, 0.985, and 0.985
+before display. Specifying -r 2 causes the coefficients to be applied twice, 
+intensifying the dominance of the red component of the image.
+
+bands/
+
+	bands [-d display] [-c] -i image
+
+Bands accepts a TripleBand JPEG image and displays each of its bands as a
+grayscale image in a window. By default, the program displays Y, Cb, and
+Cr components. Specifying -c causes the image to be converted to RGB before
+the components are extracted, causing the R, G, and B components of the
+image to be displayed instead. Notice that the Y component represents the
+grayscale component of the image, and displays as a grayscale version of
+the original color image. The Cb and Cr components of the image contain 
+color information, and while when displayed they resemble a grayscale 
+version of the image, neither can be used for this purpose. None of the R, G
+or B components provide acceptable grayscale representations of the original
+color image, since each band is a combination of grayscale and color content.
+
+blend/
+
+	blend [-display display]
+
+Blend illustrates the use of the Blend process element. Blend is an Xt client
+which uses the Athena Widget set. 
+
+A Blend element is used to combine two images, or an image and a constant src.
+The blend operation is controlled by an alpha constant and an optional alpha
+image input. If an alpha image is used, then each output pixel is defined as:
+
+(eq. 1)	output = src1 * ( 1 - alpha / alphaC ) + src2 * ( alpha / alphaC )
+
+If no alpha image is used, then each output pixel is defined as:
+
+(eq. 2)	output = src1 * ( 1 - alphaC ) + src2 * alphaC
+
+when output is the value at pixel i in the result, src1 is pixel i in source
+image 1, alpha is pixel i in the alpha image, alphaC is the alpha constant,
+and src2 is pixel i in source image 2.
+
+The File menu is used to select JPEG grayscale images corresponding to src1,
+src2, and alpha. As each image is selected, it is displayed along with its
+grayscale histogram. The Options menu can be used to display each of these
+images upon selection of the appropriate menu item, as well as the result of
+the images being passed through a Blend process element.
+
+The toggle "Use Alpha" can be used to control the use of the alpha image. If
+set, the alpha image is used e.g. (eq. 1) is used by the Blend element to 
+compute the result. If unset, then (eq. 2) is used by Blend.  
+
+The toggle "Use Constant" determines if src2 is based upon the image data 
+selected by the user, or a constant specified by the "Const" slider above
+it in the GUI. 
+
+The "Const" slider can be used to specify a constant which will be used as
+src2 if either the "Use Constant" toggle is selected, or no alpha image 
+has yet been selected via the File menu option, regardless of the 
+toggle's value. A value in the range of 0 (black intensity) to 255 (white 
+intensity) may be chosen using the slider. 
+
+The "Alpha" slider can be used to select a value for alphaC used in eq. 1 
+and eq. 2 above. The "Alpha" slider allows the user to select a value in
+the range of [0.0, 1.0]. If eq. 1 is used by Blend, the selected value
+is automatically converted (not by XIE or the Blend element, but by code
+in the client) to a value in the range of [0.5, 255.0] by multiplying the
+slider value by 255, and setting it to 0.5 if the result is equal to zero.
+Note that we cannot use zero because that would result in a divide by zero
+error (this is checked for by XIE, a Value error is returned if zero is
+sent by the client with a non-zero alpha phototag input). If eq. 2 is used
+by Blend, the the slider's value in the range [0.0, 1.0] inclusive is used.
+
+To see how Blend works, consider eq. 2. If alphaC is zero, then src1 will
+dominate (e.g. the resulting image is src1 with no contribution of src2). 
+If alphaC is one, then src2 dominates, with no contribution of src1 to the 
+result. Values of alphaC between 0.0 and 1.0 are used to incorporate both
+src1 and src2 in the computation of the resulting image. As alphaC tends
+to 0.0, src1 has increasing influence over the result, and as alphaC tends
+to 1.0, src2 has similar influence.
+
+Things are similar for eq. 1, but in this case alphaC and alphaP are used 
+to compute a value in the range [0.0, 1.0], after which we regress to the
+behaviour of eq. 2. In this client, alphaC is scaled to [0.5, 255] since
+we are using it to divide pixels in the range [0, 255] (again, we use 0.5
+as a lower bound to avoid Value errors as described above).
+
+clientio/
+
+	cliodemo [-d display] -i image
+
+This client demonstrates how to read client data from photoflos which have
+more than one ExportClient element asynchronously using the library function
+ReadNotifyExportVector (see clientio.c in the lib directory). 
+
+constrain/
+
+	constrain [-d display] -i image [-h] [-j inLow ] [-k inHigh ] 
+		[-l outLow] [-m outHigh]
+
+Constrain demonstrates the use of the Constrain element and it's supported 
+techniques. The -h flag causes Constrain to use the HardClip technique, with 
+pixels in the image being clipped to the range [0, outHigh], where outHigh is 
+specified by the -m argument. If -h is not specified, the ClipScale technique 
+is used instead, with the result defined by the -j, -k, -l and -m arguments.  
+Constrain accepts a SingleBand JPEG image as input.
+
+Constrain also demonstrates the use of ExportClientHistogram, and it displays
+histograms of the image before and after application of the Constrain element
+to illustrate how the intensity values in the image are redistributed.
+
+convolve/
+
+	convolve [-d display] -i image -k kernel_file [-c constant] 
+
+Convolve accepts a SingleBand or TripleBand JPEG image. The image is passed
+though a Convolve element, with the size and contents of the convolution 
+kernel defined by the file specified by the -k argument. Several kernel files 
+are provided along with the client in the kernel subdirectory.
+
+dither/
+
+	dither [-d display] -i image [-l levels] [-o threshold]
+
+Dither takes a SingleBand JPEG Baseline image and dithers it for display
+based upon the arguments provided. XIE supports two dither techniques; 
+Error Diffusion (also known as Floyd-Steinberg dithering), and Ordered. 
+In general, ordered is faster, but less satisfactory than Error Diffusion.
+This client allows you to play with both to get an idea of how they compare
+to each other. Two sh scripts, compare and ordered, are provided to help you
+get started in making a comparison of the supported dither techniques. The 
+script named Ordered compares ordered dither using thresholds of 1 and 8 
+(1 will give less satisfactory results than 8 but will be faster, and the
+quality difference is greater as dither levels becomes smaller e.g. dither
+to 64 levels from 256 won't produce as dramatic a difference between the
+two thresholds as will dither to 4 levels from 256 will). The compare sh
+script compares Error Diffusion to Ordered for the same amount of levels
+reduction for the same image. The speed difference may not be perceivable 
+on your server, but the quality differences will be for sure. 
+
+dumptech/
+
+	dumptech [-d display]
+
+Dumptech queries XIE and displays to stdout information about the techniques 
+which are supported by the server to which the client is connected. Notice
+that in the XIE-SI, all techniques have the same speed rating, and so the
+"Fastest technique" output should be viewed with some skepticism. It is up
+to server vendors to supply meaning values in their ports.
+
+edraw/
+
+	edraw [-d display] [-c] [-s] [-p planemask] [-x xOffset] [-y yOffset] 
+		[-f function] -i image
+
+Edraw allows the user to experiment with various GC attributes and arguments
+to XieFloExportDrawable to determine how they affect the display of an image. 
+The arguments supported are:
+
+-c	the GCClipMask attribute of the GC is set, and the bitmap
+	stored in the file "bitmap" provides the clipmask pixmap.	
+
+-s	the subwindow_mode of the GC is set to IncludeInferiors
+
+-p planemask	the GC plane_mask is set to planemask
+
+-x xOffset	the origin in the drawable of the displayed image is located
+		with an x coordinate of xOffset
+
+-y yOffset	the origin in the drawable of the displayed image is located
+		with an y coordinate of yOffset
+
+-f function	the GC function is set based upon one of the following values:
+
+Argument		GC function
+---------		----------
+"GXcopy"		GXcopy
+"GXclear"		GXclear
+"GXand"			GXand
+"GXandReverse"		GXandReverse
+"GXandInverted"		GXandInverted
+"GXnoop"		GXnoop
+"GXxor"			GXxor
+"GXor"			GXor
+"GXnor"			GXnor
+"GXequiv"		GXequiv
+"GXinvert"		GXinvert
+"GXorReverse"		GXorReverse
+"GXcopyInverted"	GXcopyInverted
+"GXorInverted"		GXorInverted
+"GXnand"		GXnand
+"GXset"			GXset
+
+The image specified by -i must be JPEG and SingleBand for it to work with 
+edraw.
+
+edrawp/
+
+	edrawp [-d display] [-c] [-s] [-p planemask] [-x xOffset] [-y yOffset] 
+		[-f function] [-h fill-style] -i image
+
+Edrawp is similar to edraw except that ExportDrawablePlane is used instead
+of ExportDrawable. The arguments accepted by edrawp are identical to those
+accepted by edraw. An additional argument, -h fill-style, can be specified.
+fill-style can take on one of the following values:
+
+Argument			Fill Value
+---------			--------
+
+"FillSolid"			FillSolid
+"FillTiled"			FillTiled
+"FillStippled"			FillStippled
+"FillOpaqueStippled"		FillOpaqueStippled
+
+While edrawp accepts an image file argument (-i), it currently only is able 
+to read the G31D image stored in the file images/bitonal/g31d.raw. The next 
+version of this program should be able to read any CCITT bitonal image stored 
+in a TIFF file.
+
+emp/
+
+Emp is a Motif application that implements a small employee database, and 
+illustrates basic intergration of XIE into a simple Motif application. The
+design of the client is described in the September 1998 issue of Linux 
+Journal (www.ssc.com).
+
+errors/
+
+	generrs [-d display] [h][r]
+
+This client demonstrates how to write code which can handle XIE error events 
+as opposed to having XIElib handle them on the client's behalf. In XIElib, 
+as in Xlib, the default error handlers exit after displaying a message to 
+the screen; in many cases, such behavior is not acceptable since a client may
+need to perform cleanup and recovery before the application exits. In XIE, as 
+opposed to X, errors are not necessarily fatal; while the photoflo may 
+terminate its execution, recovery by the client is often possible. A good
+example of this is sending a poorly encoded image to ImportClientPhoto. It
+is perfectly likely in some applications that a user will select a corrupt
+image, and XIE will generate an error from ImportClientPhoto when trying to
+decode it. It is much better for the client to capture this event and put
+up a dialog such as "Image data was corrupt - unable to decode" as opposed
+to allowing XIElib to capture the error, dump a terse error to stderr, and
+exit.
+
+The argument -h causes the client to use its own error handler. Specifying 
+-r causes a LUT resource error to be generated by the client. Otherwise, a 
+FloLUT error is generated.
+
+expose/
+
+	expose [-d display] -i image [-p] [-a] 
+
+Expose illustrates two basic strategies for handling expose events in 
+windows to which a photoflo has displayed an image. The first strategy,
+which is the default if -p is not specified, is to send the output of
+the photoflo (prior to the image data being processed by the backend)
+to a photomap, and then run the following photoflo:
+
+	ImportPhotomap -> (Backend)
+
+to display it. A derivative of this method would be to take the result
+of the photoflo, including any elements in the backend up to but not
+including the ExportDrawable(Plane) element, and place it in a photomap,
+and run:
+
+	ImportPhotomap -> ExportDrawable(Plane).
+
+The problem with this photoflo is that the backend may be needed. For
+example, putting the image data through ConvertToIndex would be useful
+in dealing with colormap changes which may have occured between expose
+events on the window (that brings up another issue; refreshes generally
+should be considered also if ColormapNotify events are received since 
+the changes to the colormap might invalidate the image data rendered
+to a window).
+
+Specifying -p causes the sample to route the result of the backend
+(again up to but not including EDP or ED) to a Pixmap. The photoflo 
+which is executed to handle refreshes is:
+
+	ImportDrawable(Plane) -> ExportDrawable(Plane).
+
+where the drawable associated with ID(P) is the Pixmap, and the drawable
+associated with ED(P) is of course the client window.
+
+Normally, ID(P) only snarfs the portion of the Pixmap which corresponds
+to the expose event (using the report x, y, width and height fields of
+the event). The entire Pixmap is read and displayed if the -a argument
+is specified.
+
+Surely reading from a Pixmap only those bits corresponding to the actual
+exposed area is faster than using IP -> ED(P) (e.g. reading from a 
+photomap) even if the backend is considered and the photomap is storing
+colormap index data directly displayable in the window. This is because
+the IP -> ED(P) strategy requires the entire area of the window to be
+updated, regardless of how much is actually in need of refreshing.
+
+The client is capable of dealing with grayscale or color JPEG data. It
+uses backend code (like most samples do) so it should work on any 
+display. Note that most of the sample clients do not have a refresh
+strategy. This does not imply that a strategy for handling refreshes
+is unimportant in your applications.
+
+faxview/
+
+	faxview [-d display] -i image [-a angle]
+
+Faxview scales a FAX using Geometry so that the height of the image is within 
+the limits of the display and then displays it in an appropriately sized 
+window. The fax image is read from a TIFF file and can be encoded as G31D, 
+G32D, or G42D. If the -a argument is specified, the image is rotated about 
+its center by the number of degrees specified by angle. The sample technique
+used for the scaling and rotating is bilinear interpolation. 
+
+geometry/ 
+
+	geometry [-d display] [-s a] | [-s b] -i image -t transforms
+
+Geometry illustrates an approach to dealing with the specification of the 
+affine transforms required by the Geometry process element. The geometric 
+operations to be performed on the image are specified in the file identified 
+by the -t argument.
+
+Any number of transformations can be specified in the file; geometry 
+represents each as a 3x3 transformation matrix and concatenates these 
+together to arrive at a single 3x3 matrix from which the coefficients 
+needed by the Geometry element are extracted. See concat, below.
+
+	scale [-d display] -i image [-s a] | [-s b]
+
+Scale displays the grayscale JPEG image specified by the -i argument in
+a window. As the window is resized, the image is passed through a 
+Geometry element which rescales it to the window's dimensions. It is then 
+redisplayed. The image data is cached on the server in a photomap after
+being decoded to facilitate its display upon window exposures. 
+
+	concat [-d display] -i image [-s a] [-s b] [-a angle] [-x scaleX]
+		[-y ScaleY] 
+
+Concat illustrates the results of applying geometry elements to an image
+in series, as opposed to constructing a single set of transformation 
+coefficients as is done by "geometry" (above).
+
+Try comparing the results of executing geometry using the provided coeffs 
+file:
+
+rotate 45
+scale 0.5 0.5
+
+and an execution of concat with arguments of -a 45 -x 0.5 -y 0.5 by running
+xmag to view portions of the resulting output. Although the transformations 
+applied are the same, doing the sampling only once, as done by geometry, as
+opposed to twice, as is done by concat, will generate a better result. This
+can perhaps be seen best if pixels along borders in the image are inspected.
+The effect of placing geometry elements in series will worsen as the number
+of elements in the series is increased (depending upon which transformations 
+are performed, the data being transformed, and the sampling technique used).
+
+The sample technique used by the above clients is nearest neighbor. If -s b 
+is specified, then bilinear interpolation is used. If -s a is specified, 
+the sample technique used is antialias. 
+
+hasxie/
+
+	hasxie (no arguments, set your DISPLAY variable before executing)
+
+Hasxie is everything you'd want in an XIE "Hello World" program, and less :-)
+It simply calls XieInitialize, and exits with a 0 if XIE is supported by the
+server, or a 1 otherwise.  
+	
+hist_slide/
+
+	hist_slide [-d display] [-s constant | -a constant] [-m factor] 
+		-i image
+
+Hist_slide demonstrates how to perform some simple histogram stretching and
+manipulation tasks on an image in addition to those of the type performed by
+MatchHistogram. The following options are supported by hist_slide:
+
+-s constant		subtract constant from each pixel, sliding the 
+			histogram to the left
+
+-a constant		add constant to each pixel, sliding the histogram 
+			to the right
+
+-m factor		multiply each pixel by factor; stretching the 
+			histogram within the range of the image
+
+icr/
+
+	icr [-d display] -m max -i image
+
+Icr demonstrates the ImportClientROI element and the use of process domains. 
+The image data is passed through an Arithmetic element which computes each 
+pixel in the grayscale JPEG image as the max of its previous value or that 
+specified by the -m argument. This processing is restricted to the regions of 
+the image coinciding with the ROIs which were sent by the client and which 
+form the process domain of the Arithmetic element.
+
+idraw/
+
+	idraw [-d display] [-f output_file] [-c]
+
+This client demonstrates the use of the ImportDrawable element. This client is
+somewhat similar to the X client xwd; some portions of xwd were borrowed in
+order to implement this client. If the -f argument is supplied, a JPEG (JFIF) 
+file containing the imported image data will be written. The image data which 
+is retrieved is displayed in a window using ExportDrawable.
+
+If -c is specified, a TripleBand JPEG will be written. Otherwise, the result
+is SingleBand. 
+
+idrawp/
+
+	idrawp [-d display]
+
+The photoflo build by idrawp imports two raw SingleBand images, image.001
+and image.002, and displays them in a window. The client creates a pixmap 
+resource, and uses Xlib graphics calls to render polygons and cicles, etc., 
+into the pixmap. Then, ImportDrawablePlane is used to retrieve a plane from
+the pixmap. This bitonal image is used as a control plane (process domain) for
+a Logical process element which uses a copy operator to copy portions of one
+of the images into the other in the areas corresponding to the control plane.
+
+jpeg/
+
+	qtables [-d display] -i image -o output [-h horizontal sample] 
+		[-v vertical sample] [-q quality] [-s] [-f] [-a] [-c]
+
+Qtables illustrates the various technique parameters which are supported by 
+the JPEGBaseline encode technique. The client accepts the following arguments:
+
+-s		display image in a window
+-q		quality factor in range [0,100]
+-f		use quantization tables provided by XIE (ignoring -q)
+-a		use ac tables provided by XIE
+-c		use dc tables provided by XIE
+
+The code is extensively commented; be sure to read the comments which describe
+the -f, -a, and -c arguments.
+
+Perhaps the most outstanding feature of the client is the -q argument. Many 
+JPEG encoders (at least, most of those seen by me anyway) allow the user to 
+specify a tradeoff between image quality and compression. The issues behind 
+the tradeoff are well documented in the book. This tradeoff is generally 
+specified as a value between 0 and 100, where 100 represents high image 
+quality and low compression, and 0 represents very bad quality but exceptional 
+compression. Usually, a value close to 75 or so is used which results in no 
+noticeable image degradation and an acceptable amount of compression. XIE 
+does not accept a quality factor, but this client illustrates how one can be 
+implemented by clients which desire it.
+
+jpegtoraw/
+
+	jpegtoraw [-d display] -i image -o output [-f fillOrder] 
+		[-p pixelOrder] [-s pixelStride] [-c scanlinePad] 
+		[-w number of output levels]
+
+Jpegtoraw accepts a SingleBand JPEG image as input, and converts the image to
+UncompressedSingle which is exported from the photoflo and stored in a file.
+The attributes of the uncompressed encoding can be specified as command line
+arguments.
+
+lib/
+
+This directory contains the source and makefiles used to build libsamp.a, 
+which contains routines needed by many of the sample clients on the CD. 
+Please take the time to look through this source; the intent is that the 
+routines it provides will help you in building your own XIElib clients.
+
+match_hist/
+
+	histo [-d display] [-f] [-g mean sigma] [-h const [True|False]] 
+		-i image
+
+Histo demonstrates the XIE MatchHistogram element. 
+ 
+Histo allows you to experiment with the various histogram equalization
+techniques of XIE 5.0. Which technique is used is defined by command line
+arguments to histo:
+ 
+Flag Parameters    Matching Technique   Example Command Line
+ 
+-f   None          Flat                 histo -f -i image.001
+-g   mean sigma    Gaussian             histo -g 128.0 64.0 -i image.001
+-h   const shape   Hyperbolic           histo -h 32.0 False -i image.001
+                                        histo -h 32.0 True -i image.001
+
+Histo only supports SingleBand JPEG image data, but can be easily modified
+to support TripleBand image data as well.
+
+modify/
+
+	modify [-d display] [-s sleeptime ] -i image -o offsetfile
+
+Modify illustrates the use of the XIElib function XieModifyPhotoflo. The 
+client executes the stored photoflo 
+
+ImportClientPhoto -> ConvertToIndex -> ExportDrawable
+
+once for each x, y offset in the file offsetfile. The client modifies the
+ExportDrawable element in the photoflo after each iteration, changing the x 
+and y offset of the image in the drawable to the next coordinate read from 
+the file, using XieModifyPhotoflo. 
+
+Note: a more efficient strategy would be to execute two photoflos. The first,
+
+ImportClientPhoto -> ExportPhotomap
+
+would be executed only once to obtain the image data from the client and 
+store it in a photomap resource. This photoflo would be an immediate photoflo 
+executed by XieExecuteImmediate. The next photoflo
+
+ImportPhotomap -> ConvertToIndex -> ExportDrawable
+
+would be the stored photoflo which would be iterated for each x, y offset in 
+the offsetfile.
+
+pasteup/
+
+	nails [-d display] -i directory
+
+The client nails scans the directory specified by the -i argument for any
+SingleBand JPEG files. The following stored photoflo is then created:
+
+ImportClientPhoto -> Geometry -> ExportPhotomap
+
+Each file is then read and stored in its own photomap resource, scaled to the 
+dimensions 64x64.  XieModifyPhotoflo is used to change each of the elements in
+the above photoflo for each image read; ImportClientPhoto is modified because 
+the attributes (e.g. width and height) of the image may change, Geometry is 
+modified because the width and the height of the image affects the scaling 
+coefficients used, and ExportPhotomap iis modified because the target photomap
+changes for each image.
+
+Once this is done, the client goes into an X event loop processing expose 
+events on the window to which the thumbnails are to be drawn. Whenever an 
+expose event is seen, the client creates a photoflo which has n ImportPhotomap 
+elements (n is the number of images displayed as thumbnails). For each of the 
+thumbnails the client creates a tile and places the tiles as best as possible 
+in the window based upon the window's geometry at the time of the expose 
+event. A PasteUp element is added to the photoflo downstream of the 
+ImportPhotomap elements, and PasteUp feeds ConvertToIndex and then an 
+ExportDrawable element which displays the image which was formed by the 
+PasteUp element.
+
+point/
+
+	falsecolor [-d display] -i image [-s [contour rainbow sin]] [-c incr]
+
+Falsecolor uses the Point element to generate a falsecolor version of the
+SingleBand JPEG image specified by the -i argument. The -s and -c arguments
+define the LUT which is used by Point. The type of falsecolor effect acheived
+is specified by the -s argument, which determines how the LUT is initialized.
+If the selected effect is contour, the increment can be specified by the -c 
+argument (the default contour increment is 16). The SingleBand image is 
+converted to TripleBand by passing it though a Point element which uses a 
+TripleBand LUT. Falsecolor uses backend code defined in lib/backend.c to 
+prepare and display the image after the falsecolor operation is performed.
+
+	trig [-d display] -i image -f [sin cos tanh] [-p period] [-a amplitude]
+
+Trig also accepts a SingleBand JPEG input. A LUT is created, with each cell 
+in the LUT initialized using one of the following equations based upon the 
+function selected by the -f argument:
+
+lut[ i ] = sin( TORAD( i * (360.0 / period) ) ) * amplitude;
+lut[ i ] = cos( TORAD( i * (360.0 / period) ) ) * amplitude;
+lut[ i ] = tanh( TORAD( i ) ) * amplitude;
+
+Amplitude is defined by the -a argument, and period is defined by the -p. The
+default period is 360 (degrees), and the default amplitude is 1.0. 
+
+Trig is intended to show how Point can be used to perform a math operation on 
+an image much like is done by the Math or Arithmetic elements for operator 
+which neither element supports.
+
+redefine/
+
+	redefine [-d display] [-s sleeptime ] -i image -o offsetfile
+
+Redefine is similar to the client modify, described above. In the modify 
+client, XieModifyPhotoflo is used to change the ExportDrawable element in 
+the photoflo once for each offset in offsetfile, causing the image to be 
+displayed in the client window at that offset. In addition, the modify 
+client uses the topology
+
+ImportClientPhoto -> ConvertToIndex -> ExportDrawable
+
+and executes this once for each image, requiring the image to be transmitted 
+multiple times from the client. The redefine client acheives the same result 
+as modify, but implements a more efficient scheme in which the image is sent 
+to the server once using the stored photoflo
+
+ImportClientPhoto -> ExportPhotomap
+
+Once the above photoflo is executed, but is replaced using XieRedefinePhotoflo
+with the following topology:
+
+ImportPhotomap -> ConvertToIndex -> ExportDrawable
+
+XieRedefinePhotoflo was required for this task since the number of elements 
+in the photoflo changed from 2 to 3.
+
+From this point on, redefine reads from the offsetfile and executes the 
+photoflo above once for each offset read. XieModifyPhotoflo is used to change 
+the offset by replacing ExportDrawable before execution. XieModifyPhotoflo 
+can be used here because only one element needs changing and the size of the 
+photoflo is to remain the same. 
+
+rgb/
+
+	white_adjust [-d display] -i image
+
+White_adjust illustrates performs white point adjustment of a TripleBand JPEG
+image to the following white points, displaying the result in an X window:
+
+Illuminant			Position in CIE coordinates
+---------			---------------------------
+
+Full Intensity White		1.000, 1.000, 1.000 
+Illuminant A			1.099, 1.000, 0.356 
+Illuminant B			0.991, 1.000, 0.853 
+Illuminant C			0.981, 1.000, 1.182 
+Illuminant D55			0.957, 1.000, 0.921 
+Illuminant D65			0.950, 1.000, 1.089 
+Illuminant D75			0.949, 1.000, 1.225 
+
+Once the TripleBand JPEG image is decoded, it is passed to ConvertToRGB to 
+convert the image from YCbCr space to RGB space. For each illuminant above, 
+the following elements are added to the photoflo:
+
+ConvertFromRGB -> ConvertToRGB -> Constrain
+
+The ConvertFromRGB element uses the RGBToCIEXYZ technique and also performs 
+the white adjustment using the xieValWhiteAdjustCIELabShift white adjust 
+technique. ConvertToRGB generates image data in the range [0.0, 1.0]; 
+Constrain is used to convert the image data to the range of [0, 255].
+
+scale_to_gray/
+
+	scale_to_gray [-d display] -i image [-a angle]
+
+Scale_to_gray accepts bitonal CCITT image data from a TIFF format file as 
+input.  If the size of the image exceeds the dimensions of the display, or 
+if a non-zero angle is specified by the -a argument, the levels attibute of 
+the bitonal image is converted to 256 levels using Point, and a filter is 
+passed over the image using Convolve, prior to sending the image to Geometry 
+for image scaling and/or rotation. If the image is scaled and/or rotated, 
+ConvertToIndex is used to generate colormap index data which can be sent to 
+ExportDrawable for display. Otherwise, if the image is displayed directly 
+after decoding by sending it to an ExportDrawablePlane element.
+
+Contrast displaying a fax using scale_to_gray:
+
+scale_to_gray -i ../../images/bitonal/ccitt_8.tif
+
+with the faxview sample client:
+
+faxview -i ../../images/bitonal/ccitt_8.tif
+
+Faxview is far speedier (the image is big, and convolve is expensive), but 
+the accuracy, if you look close, is far better using scale_to_gray.
+
+showdiff/
+
+	showdiff [-d display] -i image1 -b image2
+
+Showdiff accepts two SingleBand JPEG images or two TripleBand JPEG images as
+input. The images are imported and if TripleBand are converted from YCbCr to 
+RGB using ConvertToRGB. Image1 is then subracted from image2 using an 
+Arithmetic element. The original images, and their difference, are displayed 
+into separate X windows by the client.
+
+simple/
+
+	simple [-d display] -i image [-s]
+
+Simple is, well, perhaps too simple. It reads in a SingleBand JPEG image 
+using ImportClientPhoto and sends it unprocessed to ExportDrawable. This 
+client is a good template for more ambitious photoflos; the first thing to 
+do might be to add backend processing as described in chapter 12 of the
+book and illustrated by the sample given in /backend/backendtest.c and by
+most other clients. 
+
+sobel/
+
+	sobel [-d display] -i image -v vert_kernel_file -h horiz_kernel_file
+
+Sobel accepts a SingleBand or TripleBand JPEG image and applies back-to-back
+Convolve elements to implement a Sobel edge enhancement. The first Convolve 
+element uses the kernel specified by the -v argument; the second Convolve 
+element uses the kernel which is specified by the -h argument.
+
+threshold/
+
+	threshold [-d display] [-t threshold] -i image
+
+Threshold illustrates how Point can be used to perform a binary thresholding 
+operation on a grayscale image. Intensity values in the grayscale image which
+fall below the -t argument will be mapped to 0 (black), and those which fall 
+above are mapped to 255 (white). 
+
+	slice [-d display] [-l lower_threshold] [-u upper_threshold] -i image
+
+Slice is similar to threshold. Intensity values below lower_threshold are 
+mapped to 0, intensity values above upper_threshold are mapped to 255, and 
+intensity values between are left as is.
+
+tiff/
+
+	tiffconv [-d display] -e [G31D | G32D | G42D | TIFF2 | TIFFPackBits] 
+		-f file -o outfile
+
+Tiffconv accepts a TIFF file containing G31D, G32D, G42D, TIFF2, or 
+TIFFPackBits encoded bitonal image data from the file specified by the -f 
+argument and creates a TIFF file specified by the -o argument. The generated 
+image will be encoded as specified by the -e argument.
+
+unsharp_mask/
+
+	unsharp [-d display] -i image -k kernel_file -s scale
+
+Unsharp_mask implements an unsharp masking operation on the image specified by 
+the -i argument (the image must be JPEG, but can be SingleBand or TripleBand).
+The image, after decode, is passed to Convolve, which applies the kernel 
+specified by the -k argument. Each intensity value in the result is then 
+multiplied by scale (specified by the -s argument), and then is subtracted 
+from the original image. The result of the subtraction is then displayed in 
+a window. The multiplication and subtraction operations are performed in 
+series by Arithmetic elements.
+
+xiegc/
+
+	xiegc src1 src2
+
+The source code for xiegc for the most part is identical to that of the X 
+client xgc.  Hence its strange name.
+
+Xiegc allows the user to experiment with the various operators supported by 
+the following elements:
+
+Logical
+
+Arithmetic
+
+Math
+
+Compare
+
+Most of the XIE code is implemented in xiestuff.c, which contains the 
+functions which are described briefly below. Xiegc accepts two SingleBand 
+JPEG images as input, and displays them in separate xiegc windows. A third 
+window is used to display the results of the operation which is performed by 
+the client when the user presses the "run" button. The operation performed 
+is specified by various settings which are provided in the xiegc user 
+interface. The following functions are implemented in xiestuff.c:
+
+int
+LoadSingleBandJPEGPhotomap(display, file, photomap)
+Display		*display;
+char		*file;
+XiePhotomap	*photomap;
+
+The above function reads a SingleBand JPEG image from the file specified by 
+the argument file and stores it in a photomap resource allocated by the 
+function and returned to the caller through the argument photomap. The image 
+is scaled to the dimensions of the xiegc window used to display the image. 
+The function is called once for src1 and src2 at the start of client execution. 
+From that point image data is imported to photoflos directly from the photomap 
+resources when needed.
+
+int	
+BuildRefreshPhotoflos( X, XIE )
+XStuff *X;
+XIEStuff *XIE;
+
+The above function creates two stored photoflos, both:
+
+ImportPhotomap -> ConvertToIndex -> ExportDrawable
+
+One photoflo reads from the photomap containing the image data read from src1,
+and displays it in the first window of xiegc, while the other photoflo reads 
+from the photomap containing the image data read from src and displays it in 
+the second xiegc window. These photoflos are executed by the client whenever 
+expose events are received to refresh window contents. This is done by 
+RefreshSources, below:
+
+int
+RefreshSources( X, XIE )
+XStuff *X;
+XIEStuff *XIE;
+{
+	XieExecutePhotoflo( X->dpy, XIE->refresh1, False );
+	XieExecutePhotoflo( X->dpy, XIE->refresh2, False );
+	return( 1 );
+}
+
+The following functions are called by the "Run" button callback; which 
+function is called is based upon the test selected by the user using the 
+buttons which are supplied by the user interface. Most of the tests support 
+dyadic (two image) and monadic (one image and a constant) modes of operation, 
+for example, the Arithmetic element can execute:
+
+image1 operator image2
+
+or
+
+image1 operator constant
+
+depending upon whether or not the dyadic or monadic button is selected. The 
+routines below create and execute photoflos which are based upon which of the
+above two modes are selected by the user at the time the test is executed. 
+
+The results of the tests are displayed in the third xiegc window, as well as 
+the histogram of the resulting image.
+
+int
+DoLogicalFlo()
+
+int
+DoArithmeticFlo()
+
+int
+DoMathFlo()
+
+int
+DoCompareFlo()
+
+xlib/
+
+This directory contains clients which are xlib only, or which are based upon a
+hybrid approach in which XIE and the client cooperate in performing the image
+processing tasks because XIE does not provide a Process element or elements 
+which provide the necessary functionality. For example, say we wish to perform 
+the following operations on a JPEG image:
+
+Image decode -> scale -> proprietary magic -> low pass ->  export to window
+
+Clearly, ImportClientPhoto, Geometry, Convolve, and ExportDrawable elements
+are capable of satisfying the image decode, scale, low pass,  and export to 
+window components of the desired operation. Sad to say, XIE does not have a
+"proprietary magic" element. Therefore the following strategy can be adopted:
+
+(XIE)
+Image decode -> scale -> export to client
+
+(Client)
+Read image from XIE
+Perform proprietary magic
+Send image to XIE
+
+(XIE)
+Image decode -> low pass -> export to window
+
+The client then might create and execute the following photoflos corresponding
+to the above:
+
+ImportClientPhoto -> Geometry -> ExportClientPhoto
+
+ImportClientPhoto -> Convolve -> ExportDrawable
+
+The client usages are:
+
+	hybrid [-display display] [other x args]
+
+Hybrid is an Xt/Xaw application which shows how to combine XIElib programming 
+with Xt/Widget applications. It implements two image processing controls, 
+median filter, and match histogram. Because XIE does not have a median filter 
+element, the client must export the image back to the client for median filter 
+processing (the code which implements the median filter is in median.c). 
+Histogram matching is implemented entirely in XIE using the MatchHistogram 
+element. The client also illustrates how to cache images in photomap resources. 
+Image refresh (the Revert To Original menu item) is implemented by redisplaying
+a copy of the original image which was stored in a photomap resource once the 
+image was selected by the user. A second photomap is used a source for image 
+data by the photoflos which implement the median filter and histogram matching 
+operations. The photoflos which implement these controls write the resulting 
+image back to this photomap using ExportPhotomap in addition to displaying 
+the result in a client window.  
+
+Try displaying an image and then applying a median filter repeatedly (say,
+10 or 12 times). Notice the posterization effects that occur as a result.
+
+        put_scaled [-d display] [-s scale] -i image
+
+Put_scaled implements a routine called XiePutScaledImage(). XiePutScaledImage()
+is similar to XPutImage in that it is designed to display an XImage in a 
+drawable. 
+
+The client accepts a PPM (color Portable Pixmap) or PGM (grayscale Portable 
+graymap) image as input. An XImage is created from this data and is sent to 
+the routine XPutScaledImage along with a scaling factor which was specified 
+by the -s argument. If the scaling factor is 1.0, the image is displayed using 
+XPutImage. Doing this will result in an image which is displayed with false 
+colors unless the window's colormap contains colors which are suitable for 
+the image that is being displayed and the image indexes these colors correctly. 
+If the scale factor is not equal to 1.0 (e.g. 0.8 or 1.1 are good values to 
+start with) then a photoflo is created which accepts the image data as 
+UncompressedSingle if the image was grayscale or UncompressedTriple if the 
+image was TripleBand, scales the image using a Geometry element, and displays 
+the image in the drawable specified using ExportDrawable. Improvements to 
+XiePutScaledImage would be to use XIE even if the scaling factor is 1.0, and 
+to replace ConvertToIndex and ExportDrawable with a backend which is more 
+appropriate to the image and the visual/colormap of the drawable using the 
+techniques illustrated in chapter 19 of the book and in the client 
+backend/backendtest.c.
+
+        median [-s] [-m width] [-d display] [-r repeat] -i image
+
+Median accepts a PGM grayscale image as input. If -s is specified, the image 
+is displayed in a window using colors allocated from the server's default 
+colormap, otherwise the client creates its own colormap from which a linear 
+ramp of grayscale colors. If -m is specified, the client adds white and black 
+shot noise to the image, and will apply a median filter of the specified width 
+to the noisy image once as many times as specified by the -r argument. The 
+result of the median filtering is displayed in a separate X window.
+

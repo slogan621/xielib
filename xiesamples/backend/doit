@@ -1,0 +1,39 @@
+#
+## SingleBand images 
+#
+echo backendtest -i ../../images/jpeg/gray/golfgray.jpg -c TrueColor -m GRAY
+backendtest -i ../../images/jpeg/gray/golfgray.jpg -c TrueColor -m GRAY
+echo backendtest -i ../../images/jpeg/gray/golfgray.jpg -c TrueColor -m BEST
+backendtest -i ../../images/jpeg/gray/golfgray.jpg -c TrueColor -m BEST
+echo backendtest -i ../../images/jpeg/gray/golfgray.jpg -c TrueColor -m DEFAULT
+backendtest -i ../../images/jpeg/gray/golfgray.jpg -c TrueColor -m DEFAULT
+echo backendtest -i ../../images/jpeg/gray/golfgray.jpg -c TrueColor
+backendtest -i ../../images/jpeg/gray/golfgray.jpg -c TrueColor
+echo backendtest -i ../../images/jpeg/gray/golfgray.jpg -c StaticColor -m GRAY
+backendtest -i ../../images/jpeg/gray/golfgray.jpg -c StaticColor -m GRAY
+echo backendtest -i ../../images/jpeg/gray/golfgray.jpg -c StaticColor -m BEST
+backendtest -i ../../images/jpeg/gray/golfgray.jpg -c StaticColor -m BEST
+echo backendtest -i ../../images/jpeg/gray/golfgray.jpg -c StaticColor -m DEFAULT
+backendtest -i ../../images/jpeg/gray/golfgray.jpg -c StaticColor -m DEFAULT
+echo backendtest -i ../../images/jpeg/gray/golfgray.jpg -c StaticColor 
+backendtest -i ../../images/jpeg/gray/golfgray.jpg -c StaticColor 
+
+## TripleBand images
+
+echo backendtest -i ../../images/jpeg/color/.jpg -c StaticColor -m GRAY
+backendtest -i ../../images/jpeg/color/golf.jpg -c StaticColor -m GRAY
+echo backendtest -i ../../images/jpeg/color/golf.jpg -c StaticColor -m BEST
+backendtest -i ../../images/jpeg/color/golf.jpg -c StaticColor -m BEST
+echo backendtest -i ../../images/jpeg/color/golf.jpg -c StaticColor -m DEFAULT
+backendtest -i ../../images/jpeg/color/golf.jpg -c StaticColor -m DEFAULT
+echo backendtest -i ../../images/jpeg/color/golf.jpg -c StaticColor 
+backendtest -i ../../images/jpeg/color/golf.jpg -c StaticColor 
+echo backendtest -i ../../images/jpeg/color/golf.jpg -c TrueColor -m GRAY
+backendtest -i ../../images/jpeg/color/golf.jpg -c TrueColor -m GRAY
+echo backendtest -i ../../images/jpeg/color/golf.jpg -c TrueColor -m BEST
+backendtest -i ../../images/jpeg/color/golf.jpg -c TrueColor -m BEST
+echo backendtest -i ../../images/jpeg/color/golf.jpg -c TrueColor -m DEFAULT
+backendtest -i ../../images/jpeg/color/golf.jpg -c TrueColor -m DEFAULT
+echo backendtest -i ../../images/jpeg/color/golf.jpg -c TrueColor
+backendtest -i ../../images/jpeg/color/golf.jpg -c TrueColor
+

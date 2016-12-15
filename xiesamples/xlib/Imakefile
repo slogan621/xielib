@@ -1,0 +1,18 @@
+SYS_LIBRARIES = ../lib/libSamp.a -lXIE -lXaw -lXt -lXmu -lSM \
+		-lICE -lX11 -lXext -lm 
+
+DEFINES = -I../lib -I/usr/X11R6/include -I/usr/X11R6/include/X11 \
+	-I/usr/X11R6/include/X11/extensions
+
+AllTarget(hybrid median put_scaled)
+
+MEDIAN_OBJS = median.o do_median.o
+
+HYBRID_OBJS = hybrid.o do_median.o
+
+SCALED_OBJS = put_scaled.o do_median.o
+
+NormalProgramTarget(hybrid,$(HYBRID_OBJS),,,)
+NormalProgramTarget(median,$(MEDIAN_OBJS),,,)
+NormalProgramTarget(put_scaled,$(SCALED_OBJS),,,)
+

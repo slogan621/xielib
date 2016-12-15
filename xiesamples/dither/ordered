@@ -1,0 +1,5 @@
+for i in 128 64 32 16 8 4 2
+do
+dither -i ../../images/jpeg/gray/lekygray.jpg -l $i -o 1
+dither -i ../../images/jpeg/gray/lekygray.jpg -l $i -o 8
+done 

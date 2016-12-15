@@ -1,0 +1,33 @@
+echo degraded
+
+histo -i ../../images/jpeg/gray/370091.jpg
+
+echo original
+
+histo -i ../../images/jpeg/gray/37009ori.jpg
+
+echo ideal 
+
+histo -i ../../images/jpeg/gray/370091.jpg -g 68.5 23 
+
+echo flat 
+
+histo -i ../../images/jpeg/gray/370091.jpg -f
+
+for mean in 2 4 8 16 32 64 68.5 74 128 160 192 
+do
+for sigma in 1 2 4 8 16 24 32 64 128
+do
+echo gaussian mean $mean sigma $sigma
+histo -i ../../images/jpeg/gray/370091.jpg -g $mean $sigma
+done
+done
+
+for bool in True False 
+do
+for value in 0.00001 0.2 0.5 0.8 1 255
+do
+echo hyperbolic value $value increasing $bool
+histo -i ../../images/jpeg/gray/370091.jpg -h $value $bool
+done
+done
